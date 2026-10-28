@@ -1,0 +1,39 @@
+-- Programa da micro-CPU (gerado pelo montador)
+-- Formato: [15..12] opcode | [11..10] RA | [9..8] RB | [7..6] RD | [5..0] endereco ou [3..0] valor
+
+WIDTH=16;
+DEPTH=64;
+
+ADDRESS_RADIX=UNS;
+DATA_RADIX=HEX;
+
+CONTENT BEGIN
+    0   :   2007;   -- 00: MOV 7, R0
+    1   :   2043;   -- 01: MOV 3, R1
+    2   :   4180;   -- 02: ADD R0, R1, R2
+    3   :   51C0;   -- 03: SUB R0, R1, R3
+    4   :   67C0;   -- 04: MUL R1, R3, R3
+    5   :   7980;   -- 05: DIV R2, R1, R2
+    6   :   8002;   -- 06: ADD R0, 2, R0
+    7   :   9004;   -- 07: SUB R0, 4, R0
+    8   :   A043;   -- 08: MUL R0, 3, R1
+    9   :   B444;   -- 09: DIV R1, 4, R1
+    10  :   DC00;   -- 10: JMP R3
+    11  :   208F;   -- 11: MOV 15, R2
+    12  :   1C00;   -- 12: MOV R3, R0
+    13  :   0600;   -- 13: CMP R1, R2
+    14  :   F010;   -- 14: JE 16
+    15  :   20CF;   -- 15: MOV 15, R3
+    16  :   20C0;   -- 16: MOV 0, R3
+    17  :   EC13;   -- 17: JZ R3, 19
+    18  :   208F;   -- 18: MOV 15, R2
+    19  :   2043;   -- 19: MOV 3, R1
+    20  :   E417;   -- 20: JZ R1, 23
+    21  :   9441;   -- 21: SUB R1, 1, R1
+    22  :   C014;   -- 22: JMP 20
+    23  :   0600;   -- 23: CMP R1, R2
+    24  :   F00F;   -- 24: JE 15
+    25  :   E80F;   -- 25: JZ R2, 15
+    26  :   3000;   -- 26: RST
+    [27..63] :   0000;
+END;

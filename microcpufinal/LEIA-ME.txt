@@ -1,0 +1,59 @@
+MICRO-CPU - VERSAO FINAL (estilo do grupo)  (SSC0118, DE0-CV Cyclone V 5CEBA4F23C7)
+
+COMO USAR
+1. Abra o cpu.qpf no Quartus.
+2. Processing > Start Compilation (Ctrl+L).
+3. Tools > Programmer > Start.
+
+NA PLACA
+- KEY0 ...... clock manual: APERTAR executa a instrucao, SOLTAR busca a proxima
+- KEY3 ...... reset: zera registradores e PC; ao soltar, a instrucao 0 ja fica pronta
+- SW0 ....... clock automatico (~1,5 instrucao por segundo) quando ligada
+              (a troca vale na proxima batida do clock automatico, em ate ~0,7 s)
+- HEX3..HEX0  R0, R1, R2, R3 (da esquerda para a direita)
+- HEX5 HEX4   PC em hexadecimal (endereco da proxima instrucao)
+- LEDR0..5    PC em binario
+- LEDR8 ..... acende enquanto a instrucao executa (botao apertado)
+- LEDR9 ..... flag "igual" (resultado do ultimo CMP)
+
+FORMATO DA INSTRUCAO (16 bits)
+  [15..12] opcode | [11..10] RA | [9..8] RB | [7..6] RD | [5..0] endereco  ou  [3..0] valor
+
+  0000 CMP RA, RB        flag = (RA == RB)        (0000 sozinho funciona como NOP)
+  0001 MOV RA, RD        RD = RA
+  0010 MOV valor, RD     RD = valor
+  0011 RST               zera R0..R3 e a flag, volta ao endereco 0
+  0100 ADD RA, RB, RD    RD = RA + RB
+  0101 SUB RA, RB, RD    RD = RA - RB
+  0110 MUL RA, RB, RD    RD = RA x RB
+  0111 DIV RA, RB, RD    RD = RA / RB   (divisao por 0 da 15)
+  1000 ADD RA, valor, RD RD = RA + valor
+  1001 SUB RA, valor, RD RD = RA - valor
+  1010 MUL RA, valor, RD RD = RA x valor
+  1011 DIV RA, valor, RD RD = RA / valor
+  1100 JMP end           PC = end
+  1101 JMP RA            PC = RA
+  1110 JZ RA, end        se RA == 0, PC = end
+  1111 JE end            se a flag "igual" == 1, PC = end
+
+ESCREVER PROGRAMAS
+- Edite o programa.asm e rode:  python montador.py programa.asm programa.mif
+- Ou edite o programa.mif direto (valores em hexadecimal).
+- Depois de trocar o .mif e preciso compilar de novo.
+
+ARQUIVOS
+  Do projeto do grupo (corrigidos):
+  cpu.bdf ............... topo: clock, contador, ROM, controle, registradores, ULA, muxes e displays
+  contadorSincrono.bdf .. contador de programa (PC) com flip-flops JK; Jmp = 1 carrega o endereco do salto
+  memoria4x4.bdf ........ 4 registradores de 4 bits (16 celulas "memoria") + leitura de RA e RB
+  memoria.bdf ........... 1 bit de registrador (flip-flop D)
+  ULA.bdf ............... soma/subtrai/multiplica/divide (aula_06/08/10/11) + comparador (igual e zero)
+
+  Novos (so os necessarios):
+  unidade_controle.bdf .. decodifica o opcode, guarda a flag "igual" e escolhe o endereco do salto
+  mux4x1.bdf ............ mux de 4 entradas feito com portas (troca o MUX41 e o LPM_MUX)
+  mux2x4.bdf ............ mux de 2 entradas de 4 bits feito com portas (troca o BUSMUX)
+  divisor_clock.bdf ..... 25 flip-flops T em cadeia: 50 MHz / 2^25 = ~1,5 Hz para o clock automatico
+
+  Blocos das aulas: aula_04 (display), aula_05, aula_06, aula_07, aula_08, aula_10, aula_11, DIV
+  Programa: programa.mif (gerado do programa.asm pelo montador.py)
